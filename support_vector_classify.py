@@ -1,4 +1,5 @@
 from sklearn.svm import SVC
+import numpy as np
 import pickle
 
 
@@ -11,20 +12,23 @@ def trainSVM(vectorfile, resultsfile):
     with open(resultsfile, 'rb') as f:
         rlist = pickle.load(f)
     global vectormachine
-    vectormachine = SVC()
+    vectormachine = SVC(gamma='auto')
     vectormachine.fit(vlist,rlist)
 
 
 def testSVM(vectorfile, resultsfile):
-    vlist = pickle.load(vectorfile)
-    rlist = pickle.load(resultsfile)
+    with open(vectorfile, 'rb') as f:
+        vlist = pickle.load(f)
+    with open(resultsfile, 'rb') as f:
+        rlist = pickle.load(f)
     error = 0
     global vectormachine
-    for x in range(len(vlist)):
-        v = vlist[x]
-        r = rlist[x]
-        p = vectormachine.predict(v)
-        error += abs(p-r)
+    error = sum(np.abs(vectormachine.predict(vlist)-rlist))
+    #for x in range(vlist.shape[0]):
+    #    v = vlist[x]
+    #    r = rlist[x]
+    #    p = vectormachine.predict(v)
+    #    error += abs(p-r)
     return error
 
 def save(filename):
@@ -36,3 +40,8 @@ def load(filename):
     global vectormachine
     with open(filename, 'rb') as f:
         vectormachine = pickle.load(f)
+
+if __name__ == '__main__':
+    trainSVM('la_pf_10.vvec','la_pf_10.rvec')
+    print(testSVM('la_pf_10.vvec','la_pf_10.rvec'))
+    save('svm.mdl')
