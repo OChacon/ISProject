@@ -28,6 +28,7 @@ def testSVM(vectorfile, resultsfile):
     return error
 
 def save(filename):
+    global vectormachine
     with open(filename, 'wb+') as f:
         pickle.dump(vectormachine, f)
 
