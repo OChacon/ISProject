@@ -18,13 +18,8 @@ def testRMF(vectorfile, resultsfile):
         vlist = pickle.load(f)
     with open(resultsfile, 'rb') as f:
         rlist = pickle.load(f)
-    error = 0
     global rmf
     error = sum(np.abs(rmf.predict(vlist) - rlist))
-    #for x in range(len(vlist)):
-    ##    r = rlist[x]
-     #   p = rmf.predict(v)
-      #  error += abs(p-r)
     return error
 
 def save(filename):
