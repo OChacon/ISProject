@@ -2,7 +2,7 @@ import pickle
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
-rmf = RandomForestClassifier(n_estimators=100,max_depth=4)
+rmf = RandomForestClassifier(n_estimators=30,max_depth=2)
 
 def trainRMF(vectorfile, resultsfile):
     with open(vectorfile, 'rb') as f:
@@ -10,7 +10,7 @@ def trainRMF(vectorfile, resultsfile):
     with open(resultsfile, 'rb') as f:
         rlist = pickle.load(f)
     global rmf
-    rmf = RandomForestClassifier(n_estimators=100,max_depth=4)
+    rmf = RandomForestClassifier(n_estimators=400,max_depth=4)
     rmf.fit(vlist,rlist)
 
 def testRMF(vectorfile, resultsfile):
@@ -33,6 +33,7 @@ def load(filename):
         rmf = pickle.load(f)
 
 if __name__ == '__main__':
-    trainRMF('la_pf_10.vvec','la_pf_10.rvec')
-    print(testRMF('la_pf_10.vvec','la_pf_10.rvec'))
+    #trainRMF('trainData.vvec','trainData.rvec')
+    load('rmf.mdl')
+    print(testRMF('testData.vvec','testData.rvec'))
     save('rmf.mdl')

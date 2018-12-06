@@ -12,7 +12,7 @@ def trainSVM(vectorfile, resultsfile):
     with open(resultsfile, 'rb') as f:
         rlist = pickle.load(f)
     global vectormachine
-    vectormachine = SVC(gamma='auto')
+    vectormachine = SVC(gamma='auto',kernel='linear')
     vectormachine.fit(vlist,rlist)
 
 
@@ -42,6 +42,6 @@ def load(filename):
         vectormachine = pickle.load(f)
 
 if __name__ == '__main__':
-    trainSVM('la_pf_10.vvec','la_pf_10.rvec')
-    print(testSVM('la_pf_10.vvec','la_pf_10.rvec'))
+    trainSVM('trainData.vvec','trainData.rvec')
+    print(testSVM('testData.vvec','testData.rvec'))
     save('svm.mdl')

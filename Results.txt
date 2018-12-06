@@ -1,0 +1,11 @@
+So for the three different Classifiers the Results break down as follows
+Support vector:
+Development Data: 96% accuracy with only 2 incorect predictions
+Eval Data: 88% accuracy with 6 incorrect predictions
+Random Forest:
+Development Data: 90% accuracy with only 5 incorrect predictions
+Eval Data: 90% accuracy on the Test Data as well
+LSTM:
+Training Data: 76% on the final training batch
+development Data: 80% accuracy with 10 incorrect thought with more training perhaps a better model could be developed
+Eval Data: 78% accuracy
