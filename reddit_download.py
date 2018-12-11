@@ -1,3 +1,8 @@
+
+"""
+A simple script designedd to download a number of posts from 2 different subReddits.
+Author: Mike Hurlbutt
+"""
 import praw
 import sys
 import json

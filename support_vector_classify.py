@@ -1,3 +1,10 @@
+"""
+A simple Support Vector Classifier that can be trianed to classify things and return Accuracy.
+It can also load and save given models. It has a linear kernel as to avoid overfitting.
+
+Author: Mike Hurlbutt
+"""
+
 from sklearn.svm import SVC
 import numpy as np
 import pickle

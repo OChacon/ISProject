@@ -2,6 +2,8 @@ import pickle
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
+"A Simple Random forest Classifier that can be used and trained to identify subreddits and save and load models"
+
 rmf = RandomForestClassifier(n_estimators=30,max_depth=2)
 
 def trainRMF(vectorfile, resultsfile):

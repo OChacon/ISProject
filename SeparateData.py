@@ -1,5 +1,15 @@
 import json
 
+"""
+A script to Seperate the json file into three files of size 50/25/25 and all with an equal number from each
+Subreddit.
+The files are then saved as
+trainData.json - For Training
+testData.json - For testing and development purposes
+evalData.json - For final evalutation
+
+Author: Mike Hurlbutt
+"""
 def segrigate(filename):
     fp = open(filename)
     data = json.load(fp)

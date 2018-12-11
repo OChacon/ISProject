@@ -1,24 +1,31 @@
+"""
+A not so simple LSTM implimentation with heavy influence from the internet and lots of trial and error.
+Heavily based on the work found here
+https://github.com/aymericdamien/TensorFlow-Examples/blob/master/notebooks/3_NeuralNetworks/dynamic_rnn.ipynb
+It uses tensor flow and can train and save and load a model to help identify subreddits or really any classifiers.
+It requires small 200 length feature vectors to run in reasonable time.
 
-# WIP
+Author: Mike Hurlbutt
+
+"""
+
+
 import tensorflow as tf
 import tensorflow
-import scipy
-from tensorflow import keras
 import pickle
 import numpy as np
-import dill
-import copy
 #tf.nn.rnn_cell.BasicLSTMCell(64)
 #tf.nn.static_rnn()
 
 
-#model = keras.Sequential([keras.layers.Flatten(input_shape=tuple([1,10])),keras.layers.LSTM(20)])
-#model.compile(optimizer=tf.train.AdamOptimizer(),
-#              loss='sparse_categorical_crossentropy',
-#             metrics=['accuracy'])
+
+
 model = None
 indices = []
 
+"""
+Batchifies a simple two lists of data so tensor flow doesn't complain.
+"""
 class batchdata:
     def __init__(self, ilist, rlist, bs):
         self.data = ilist
@@ -38,7 +45,13 @@ class batchdata:
         return bdata, blable
 
 
+"""
+The model file and all the logic involved
+"""
 class LSTMmodel:
+    """
+    A tone of setup with d being the batchified data
+    """
     def __init__(self, d):
         self.learning_rate = 0.01
         self.training_steps = 15000
@@ -63,6 +76,7 @@ class LSTMmodel:
             'out': tf.Variable(tf.random_normal([self.n_classes]))
         }
 
+        # The actual lstm implimentation wildly inefficent
         self.xs = tf.unstack(self.x, self.seq_max_len, 1)
         self.cell = tf.nn.rnn_cell.LSTMCell(self.n_hidden, name='basic_lstm_cell')
         self.out, self.state = tf.nn.static_rnn(self.cell, self.xs, dtype=tf.float32)
@@ -81,11 +95,14 @@ class LSTMmodel:
         self.correct_pred = tf.equal(tf.argmax(self.pred, 1), tf.argmax(self.y, 1))
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_pred, tf.float32))
 
-        # Initialize the variables (i.e. assign their default value)
+        # Initialize the variables and set up savor and session
         self.init = tf.global_variables_initializer()
         self.saver = tf.train.Saver()
         self.sess = tf.Session()
 
+    """
+    Trains the actual model with a set of multiple batches
+    """
     def train(self):
         #if self.sess is None:
         #    self.sess = tf.Session()
@@ -104,9 +121,11 @@ class LSTMmodel:
                 print("Step " + str(step * self.batch_size) + ", Minibatch Loss= " +
                       "{:.6f}".format(loss) + ", Training Accuracy= " +
                       "{:.5f}".format(acc))
-        #self.saver = tf.train.Saver()
         print("Optimization Finished!")
 
+    """
+    Test a batchified dataset and return the accuracy
+    """
     def test(self,dataset):
         #with tf.Session() as sess:
         #    sess.run(self.init)
@@ -122,6 +141,10 @@ class LSTMmodel:
         self.loaded = True
         self.saver.restore(self.sess,filename)
 
+
+"""
+Set up data and train the model
+"""
 def trainLSTM(vectorfile, resultsfile, modelfile=None):
     with open(vectorfile, 'rb') as f:
         vlist = pickle.load(f)
@@ -141,6 +164,10 @@ def trainLSTM(vectorfile, resultsfile, modelfile=None):
         load(modelfile)
     model.train()
 
+
+"""
+Set up data and feed into the model
+"""
 def testLSTM(vectorfile,resultsfile,loadfile = ""):
     with open(vectorfile, 'rb') as f:
         vlist = pickle.load(f)
@@ -157,6 +184,10 @@ def testLSTM(vectorfile,resultsfile,loadfile = ""):
     acc = model.test(testdata)
     return np.rint(50 - acc*50)
 
+
+"""
+Save and load the tensorflow session
+"""
 def save(filename):
     global model
     model.save(filename)

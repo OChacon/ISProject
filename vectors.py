@@ -1,5 +1,9 @@
 """
 Title: vectors.py
+
+Vectorizes a list of files along with a list of there length if counts is None then the file is vecotrized
+using the existing vocabulary stored in the local directory in the vocab.cv file
+
 Author: Oscar Chacon (orc2815@rit.edu)
 """
 
@@ -9,7 +13,8 @@ import numpy as np
 import pickle
 import os
 
-def vectorize(filenames,counts,m=-1):
+
+def vectorize(filenames,counts,m=-1,storeVocab=True):
     resultList = []
     texts = []
     labels = []
@@ -21,15 +26,26 @@ def vectorize(filenames,counts,m=-1):
                 labels.append(data[d]['subReddit'])
             resultList.append(labels.index(data[d]['subReddit']))
             texts.append(data[d]['title'] + '\n' + data[d]['desc'] + '\n' + data[d]['topComment'])
-    if m != -1:
-        count_vect = CountVectorizer(stop_words='english',max_features=m)
+    if storeVocab:
+        if m != -1:
+            count_vect = CountVectorizer(stop_words='english',max_features=m)
+        else:
+            count_vect = CountVectorizer(stop_words='english')
     else:
-        count_vect = CountVectorizer(stop_words='english')
+        with open('vocab'+str(m) + '.cv','rb') as f:
+            vocab = pickle.load(f)
+        if m != -1:
+            count_vect = CountVectorizer(stop_words='english',max_features=m,vocabulary=vocab)
+        else:
+            count_vect = CountVectorizer(stop_words='english',vocabulary=vocab)
     test_counts = count_vect.fit_transform(texts)
-    test_counts.shape
+    if storeVocab:
+        with open('vocab'+str(m) + '.cv','wb') as f:
+            pickle.dump(count_vect.vocabulary_,f)
+    #test_counts.shape
     tfidf_transformer = TfidfTransformer()
     test_tfidf = tfidf_transformer.fit_transform(test_counts)
-    test_tfidf.shape
+    #test_tfidf.shape
 
     slices = []
     for x in range(len(filenames)):
@@ -52,5 +68,5 @@ def vectorize(filenames,counts,m=-1):
 
 
 if __name__ == '__main__':
+    vectorize(['trainData.json', 'testData.json', 'evalData.json'], [100, 50, 50], 200)
     vectorize(['trainData.json','testData.json','evalData.json'],[100,50,50])
-    vectorize(['trainData.json','testData.json','evalData.json'], [100, 50, 50], 200)
